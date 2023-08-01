@@ -12,15 +12,24 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE_PATH = BASE_DIR.parent.joinpath('.env')
+
+environ.Env.read_env(ENV_FILE_PATH)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lpfmu_#lhb&kn-)xz2_9stf^1qt@o^-ivc-x+3rgf^h-^o2!j7'
+#SECRET_KEY = 'django-insecure-lpfmu_#lhb&kn-)xz2_9stf^1qt@o^-ivc-x+3rgf^h-^o2!j7'
+SECRET_KEY = env.str('SECRET_KEY', 'secret')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,8 +99,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env.str('POSTGRES_DB'),
+        'USER': env.str('POSTGRES_USER'),
+        'PASSWORD': env.str('POSTGRES_PASSWORD'),
+        'HOST': env.str('POSTGRES_HOST', default='127.0.0.1'),
+        'PORT': env.str('POSTGRES_PORT', default='5432'),
     }
 }
 
